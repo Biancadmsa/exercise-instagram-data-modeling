@@ -7,23 +7,45 @@ from eralchemy2 import render_er
 
 Base = declarative_base()
 
-class Person(Base):
-    __tablename__ = 'person'
+class User(Base):
+    __tablename__ = 'user'
     # Here we define columns for the table person
     # Notice that each column is also a normal Python instance attribute.
     id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
+    username = Column(String(250), nullable=False, unique=True)
+    firstname = Column(String(50),nullable=False)
+    lastname = Column(String(50), nullable=False)
+    email = Column(String(50), nullable=False, unique=True)
+    password = Column(String(50), nullable=False)
+    
 
-class Address(Base):
-    __tablename__ = 'address'
+class Post(Base):
+    __tablename__ = 'post'
     # Here we define columns for the table address.
     # Notice that each column is also a normal Python instance attribute.
     id = Column(Integer, primary_key=True)
-    street_name = Column(String(250))
-    street_number = Column(String(250))
-    post_code = Column(String(250), nullable=False)
-    person_id = Column(Integer, ForeignKey('person.id'))
-    person = relationship(Person)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
+    
+    
+
+class Comment(Base):
+    __tablename__ = "comment"
+    id = Column(Integer, primary_key=True)
+    comment_type = Column(String(100), nullable=True)
+    post_id = Column(Integer, ForeignKey("post.id"))
+    post = relationship(Post)
+    user = relationship(User)
+
+
+class Likes(Base):
+    __tablename__ = "likes"
+    id = Column(Integer, primary_key=True)
+    comment_id = Column(Integer, ForeignKey("comment.id"))
+    user_id = Column(Integer, ForeignKey("user.id"))
+    user = relationship(User)
+    comment = relationship(Comment)
+
 
     def to_dict(self):
         return {}
